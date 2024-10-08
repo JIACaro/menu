@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Bites</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Vinculación de estilos propios -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    <!-- Vinculación del archivo JavaScript -->
+<script src="{% static 'js/main.js' %}"></script>
+
+</head>
+<body>
+
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">🎮 Insert Coin</a>
+            <button class="btn btn-success">
+                <a href="{% url 'menu' %}" style="color: white; text-decoration: none;">
+                    Menú <i class="bi bi-cup-straw"></i>
+                </a>
+            </button>
+            <span class="navbar-text text-light ms-auto">
+                Esta es la: {{ mesa_nombre }}
+            </span>
+        </div>
+    </nav>
+
+    <!-- Sección de bienvenida -->
+    <div class="hero-section">
+        <div>
+            <h1>¡Bienvenido a Insert Bites!</h1>
+            <p>Donde la comida y los videojuegos se encuentran</p>
+            <a href="{% url 'menu' %}" class="btn menu-button">Ver Menú ➔</a>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="footer">
+        <p>
+            <a href="#" id="logout-link" style="color: inherit; text-decoration: none;">
+                © 2024 Insert Bites. Todos los derechos reservados.
+            </a>
+        </p>
+
+        <!-- Botón invisible para desloguear -->
+        <form method="POST" action="{% url 'logout' %}" id="logout-form">
+            {% csrf_token %}
+            <button type="submit" style="display: none;">Logout</button> <!-- Este botón estará completamente oculto -->
+        </form>
+    </footer>
+
+
+    <!-- Bootstrap JS (opcional, si necesitas interactividad adicional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
