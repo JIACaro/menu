@@ -4,16 +4,36 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect
 
 def home(request):
-    # Obtenemos el token de la sesión y extraemos el nombre de la mesa
-    mesa_token = request.session.get('mesa_token', 'Mesa Desconocida')
-    mesa_nombre = mesa_token.split('_')[0]  # Extraer el nombre de la mesa del token (por ejemplo: "mesa1")
-    
+    mesa_token = request.session.get('mesa_token', None)
+    mesa_nombre = mesa_token.split('_')[0] if mesa_token else "Desconocida"
     return render(request, 'home.html', {'mesa_nombre': mesa_nombre})
 
+def mesa_login(request):
+    if request.method == 'POST':
+        # Validación del login de la mesa
+        mesa_nombre = request.POST.get('mesa_nombre')
+        mesa_password = request.POST.get('mesa_password')
+        
+        # Verificar credenciales
+        if mesa_nombre == "mesa1" and mesa_password == "nintendo1":
+            # Crear el token y guardarlo en la sesión
+            mesa_token = f"{mesa_nombre}_token"
+            request.session['mesa_token'] = mesa_token
+            return redirect('home')  # Redirige al home después del login exitoso
+        else:
+            # Mensaje de error si las credenciales son incorrectas
+            return render(request, 'login.html', {'error': 'Credenciales incorrectas.'})
+    
+    return render(request, 'login.html')
 
 def menu(request):
-    productos = Producto.objects.all()  # Obtener productos desde el modelo Producto
-    return render(request, 'menu.html', {'productos': productos})
+    mesa_token = request.session.get('mesa_token', None)
+    mesa_nombre = mesa_token.split('_')[0] if mesa_token else "Desconocida"
+    
+    # Supongamos que obtienes los productos de tu modelo
+    productos = Producto.objects.all()
+    
+    return render(request, 'menu.html', {'productos': productos, 'mesa_nombre': mesa_nombre})
 
 def login_tablet(request):
     if request.method == 'POST':
@@ -36,3 +56,7 @@ def login_tablet(request):
 def logout_view(request):
     logout(request)  # Cerrar sesión
     return redirect('login')  # Redirigir al login después del logout
+
+def carrito(request):
+    # Aquí puedes manejar los items del carrito, dependiendo de tu implementación
+    return render(request, 'carrito.html')

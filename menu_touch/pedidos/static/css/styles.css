@@ -1,7 +1,60 @@
+/* Estilos específicos para tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .navbar {
+        padding: 15px 30px; /* Ajusta el padding para que la navbar se vea bien en tablets */
+    }
+
+    .hero-section {
+        padding: 50px 20px; /* Ajusta los márgenes para tablets */
+        font-size: 1.5rem; /* Ajusta el tamaño de la fuente */
+    }
+
+    .card {
+        margin: 15px; /* Reduce el margen para que las tarjetas se acomoden mejor */
+    }
+
+    .footer {
+        padding: 10px; /* Ajusta el padding del footer */
+        font-size: 0.9rem; /* Tamaño de letra más pequeño */
+    }
+}
+/* Card para home.html */
+.card-home {
+    background-color: rgb(0, 0, 0);
+    color: white;
+    border-radius: 15px;
+    padding: 20px;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgb(0, 0, 0);
+}
+
+.card-home .card-title {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.card-home .card-text {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.menu-button {
+    background-color: #6c63ff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.1rem;
+}
+
+.menu-button:hover {
+    background-color: #5a54e7;
+}
+
 /* Estilos de la página */
 body {
-    background-color: #000;
-    color: white;
+    background-color: #000;  /* Fondo oscuro */
+    color: white;  /* Texto blanco */
     text-align: center;
 }
 
@@ -10,38 +63,73 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: black;
-    color: white;
+    background-image: url("/media/epico.jpg");
+    background-size:contain;
+    background-position: center;
 }
 
-.hero-section h1 {
-    font-size: 4rem;
+h2 {
+    color: #fff;  /* Título en blanco */
+    margin-bottom: 30px;
 }
 
-.hero-section p {
-    font-size: 1.5rem;
+/* Estilos de las tarjetas */
+.card {
+    border-radius: 10px;
+    transition: transform 0.2s ease-in-out;
+    background-color: #1c1c1c;  /* Fondo oscuro para las tarjetas */
+    color: white;  /* Texto blanco */
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 0.9rem;
+    color: #ccc;  /* Texto gris claro */
+}
+
+.price {
+    font-size: 1.3rem;
+    color: #fff;  /* Texto blanco para los precios */
+    margin-bottom: 10px;
+}
+
+/* Botón morado */
+.btn-purple {
+    background-color: #6c63ff;  /* Botón morado */
+    border-color: #6c63ff;
+    font-size: 1rem;
+    color: white;  /* Texto blanco en el botón */
+}
+
+.btn-purple:hover {
+    background-color: #5a54e7;  /* Hover morado más oscuro */
 }
 
 .menu-button {
-    background-color: #6c63ff;
-    color: white;
-    border-radius: 50px;
-    padding: 10px 30px;
-    font-size: 1.2rem;
+    background-color: #6c63ff;  /* Fondo morado */
+    color: white;  /* Texto blanco */
+    border-radius: 50px;  /* Bordes redondeados */
+    padding: 10px 30px;  /* Espaciado interno */
+    font-size: 1.2rem;  /* Tamaño de la fuente */
+    border: none;  /* Sin borde adicional */
+    transition: background-color 0.3s ease-in-out;  /* Transición suave */
 }
 
 .menu-button:hover {
-    background-color: #5a54e7;
+    background-color: #5a54e7;  /* Morado más oscuro en hover */
 }
 
-.navbar {
-    background-color: #111;
-    padding: 10px 20px;
-}
-
+/* Footer */
 .footer {
-    background-color: #111;
+    background-color: #111;  /* Fondo oscuro */
     padding: 20px;
     color: white;
 }
-
