@@ -4,23 +4,25 @@
 
 {% block content %}
     <h2 class="text-center mb-5">Nuestro Menú</h2>
-    <div class="row">
-        {% for producto in productos %}
-        <div class="col-12 col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
-            <div class="card shadow-sm w-100 text-center">
-                {% if producto.imagen %}
-                <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="height: 250px; object-fit: cover;">
-                {% else %}
-                <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen no disponible" style="height: 250px; object-fit: cover;">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title font-weight-bold">{{ producto.nombre }}</h5>
-                    <p class="card-text">{{ producto.descripcion }}</p>
-                    <p class="price text-white"><strong>${{ producto.precio|floatformat:0 }}</strong></p>
-                    <a href="#" class="btn menu-button w-100">Agregar al Carrito</a>
+    <div class="container mt-4">
+        <div class="row">
+            {% for producto in productos %}
+            <div class="col-md-4 mb-4 d-flex align-items-stretch">
+                <div class="card shadow-sm w-100 text-center" data-id="{{ producto.id }}">
+                    {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Imagen no disponible" style="height: 250px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">{{ producto.nombre }}</h5>
+                        <p class="card-text">{{ producto.descripcion }}</p>
+                        <p class="price text-white  p-2 rounded"><strong>${{ producto.precio|floatformat:0 }}</strong></p>
+                        <button onclick="agregarAlCarrito({{ producto.id }})" class="btn btn-purple w-100 mt-2">Agregar al Carrito</button>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 {% endblock %}

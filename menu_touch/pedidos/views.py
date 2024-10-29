@@ -1,7 +1,10 @@
-from django.shortcuts import render, redirect
-from .models import Producto, Mesa
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Producto, Mesa, Pedido, PedidoProducto
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.db.models import F
+
 
 def home(request):
     mesa_token = request.session.get('mesa_token', None)
@@ -60,3 +63,84 @@ def logout_view(request):
 def carrito(request):
     # Aquí puedes manejar los items del carrito, dependiendo de tu implementación
     return render(request, 'carrito.html')
+
+# Carrito n°1
+def agregar_al_carrito(request, producto_id):
+    if request.method == 'GET':
+        producto = get_object_or_404(Producto, id=producto_id)
+        pedido, _ = Pedido.objects.get_or_create(cliente=request.user, total=0)
+        
+        # Agregar o actualizar el producto en el carrito
+        pedido_producto, created = PedidoProducto.objects.get_or_create(
+            pedido=pedido,
+            producto=producto,
+            defaults={'cantidad': 1, 'subtotal': producto.precio}
+        )
+        
+        if not created:
+            pedido_producto.cantidad += 1
+            pedido_producto.subtotal = pedido_producto.cantidad * producto.precio
+            pedido_producto.save()
+
+        # Recalcular el total del pedido
+        pedido.total = sum(item.subtotal for item in pedido.pedidoproducto_set.all())
+        pedido.save()
+
+        # Preparar respuesta
+        productos_en_carrito = pedido.pedidoproducto_set.all()
+        carrito_items = [
+            {"nombre": item.producto.nombre, "cantidad": item.cantidad, "subtotal": float(item.subtotal)}
+            for item in productos_en_carrito
+        ]
+        total = float(pedido.total)
+
+        return JsonResponse({"carrito_items": carrito_items, "total": total, "carrito_count": productos_en_carrito.count()})
+    else:
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    
+def disminuir_cantidad(request, producto_id):
+    pedido = Pedido.objects.get(cliente=request.user)
+    pedido_producto = get_object_or_404(PedidoProducto, pedido=pedido, producto_id=producto_id)
+
+    if pedido_producto.cantidad > 1:
+        pedido_producto.cantidad -= 1
+        pedido_producto.subtotal = pedido_producto.cantidad * pedido_producto.producto.precio
+        pedido_producto.save()
+    else:
+        pedido_producto.delete()  # Si la cantidad es 1, se elimina el producto del carrito
+
+    # Actualizar el total del pedido
+    pedido.total = sum(item.subtotal for item in pedido.pedidoproducto_set.all())
+    pedido.save()
+
+    return _actualizar_respuesta_carrito(pedido)
+
+def eliminar_del_carrito(request, producto_id):
+    pedido = Pedido.objects.get(cliente=request.user)
+    pedido_producto = get_object_or_404(PedidoProducto, pedido=pedido, producto_id=producto_id)
+    pedido_producto.delete()
+
+    # Actualizar el total del pedido
+    pedido.total = sum(item.subtotal for item in pedido.pedidoproducto_set.all())
+    pedido.save()
+
+    return _actualizar_respuesta_carrito(pedido)
+
+def _actualizar_respuesta_carrito(pedido):
+    productos_en_carrito = pedido.pedidoproducto_set.all()
+    carrito_items = [
+        {
+            "id": item.producto.id,
+            "nombre": item.producto.nombre,
+            "cantidad": item.cantidad,
+            "subtotal": float(item.subtotal),
+        }
+        for item in productos_en_carrito
+    ]
+    total = float(pedido.total)
+
+    return JsonResponse({
+        "carrito_items": carrito_items,
+        "total": total,
+        "carrito_count": productos_en_carrito.count()
+    })

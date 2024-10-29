@@ -29,9 +29,32 @@
                     Menú <i class="bi bi-cup-straw"></i>
                 </a>
             </button>
-            <span class="navbar-text text-light ms-auto">
-                Esta es la: {{ mesa_nombre }}
-            </span>
+
+            <div class="ms-auto d-flex align-items-center">
+                <span class="navbar-text text-light me-3">
+                    Esta es la: {{ mesa_nombre }}
+                </span>
+
+                <!-- Ícono de carrito -->
+                <div class="dropdown">
+                    <a href="#" class="btn btn-outline-light position-relative" id="cartDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-cart"></i>
+                        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            0
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 300px;" aria-labelledby="cartDropdown" id="cartContent">
+                        <div id="cart-items">
+                            <p class="text-center">Tu carrito está vacío.</p>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <strong>Total:</strong>
+                            <span id="cart-total">$0</span>
+                        </div>
+                        <button class="btn btn-success w-100 mt-2" onclick="carrito()">Ir a Pagar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 

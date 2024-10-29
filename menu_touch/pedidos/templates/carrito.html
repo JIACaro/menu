@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Carrito de Compras</h1>
+<table>
+    <tr>
+        <th>Producto</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Subtotal</th>
+        <th>Acciones</th>
+    </tr>
+    {% for item in productos_en_carrito %}
+    <tr>
+        <td>{{ item.producto.nombre }}</td>
+        <td>${{ item.producto.precio }}</td>
+        <td>{{ item.cantidad }}</td>
+        <td>${{ item.subtotal }}</td>
+        <td>
+            <a href="{% url 'eliminar_del_carrito' item.producto.id %}">Eliminar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<h3>Total: ${{ pedido.total }}</h3>
+<a href="{% url 'finalizar_pedido' %}">Finalizar Pedido</a>
+{% endblock %}
