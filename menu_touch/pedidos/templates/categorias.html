@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorías{% endblock %}
+
+{% block content %}
+    <div class="content-center">
+        <h2 class="text-center mb-5">Selecciona una Categoría</h2>
+        
+        <div class="container">
+            <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
+                {% for categoria in categorias %}
+                <div class="col">
+                    <div class="card text-white">
+                        <a href="{% url 'menu' %}?categoria={{ categoria.nombre }}" class="text-decoration-none text-white">
+                            <img src="{{ categoria.imagen }}" class="card-img" alt="{{ categoria.nombre }}" style="height: 250px; object-fit: cover;">
+                            <div class="card-img-overlay d-flex justify-content-center align-items-center">
+                                <h3 class="card-title bg-dark p-2 rounded">{{ categoria.nombre }}</h3>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -3,8 +3,25 @@
 {% block title %}Nuestro Menú{% endblock %}
 
 {% block content %}
-    <h2 class="text-center mb-5">Nuestro Menú</h2>
     <div class="container mt-4">
+        <!-- Fila para la flecha de regreso -->
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'categorias' %}" class="text-decoration-none text-dark">
+                    <i class="bi bi-arrow-left-circle" style="font-size: 1.5rem;"></i> Volver a Categorías
+                </a>
+            </div>
+        </div>
+        
+        <!-- Título centrado debajo de la flecha -->
+        <h2 class="text-center mb-5">
+            {% if categoria_seleccionada %}
+                Menú - {{ categoria_seleccionada }}
+            {% else %}
+                Nuestro Menú
+            {% endif %}
+        </h2>
+
         <div class="row">
             {% for producto in productos %}
             <div class="col-md-4 mb-4 d-flex align-items-stretch">
@@ -17,11 +34,13 @@
                     <div class="card-body">
                         <h5 class="card-title font-weight-bold">{{ producto.nombre }}</h5>
                         <p class="card-text">{{ producto.descripcion }}</p>
-                        <p class="price text-white  p-2 rounded"><strong>${{ producto.precio|floatformat:0 }}</strong></p>
+                        <p class="price text-white bg-dark p-2 rounded"><strong>${{ producto.precio|floatformat:0 }}</strong></p>
                         <button onclick="agregarAlCarrito({{ producto.id }})" class="btn btn-purple w-100 mt-2">Agregar al Carrito</button>
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <p class="text-center">No hay productos en esta categoría.</p>
             {% endfor %}
         </div>
     </div>

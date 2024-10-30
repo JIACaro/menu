@@ -18,6 +18,19 @@
         font-size: 0.9rem; /* Tamaño de letra más pequeño */
     }
 }
+
+/* Estructura principal con CSS Grid */
+.grid-container {
+    display: grid;
+    min-height: 100vh;
+    grid-template-rows: auto 1fr auto;
+}
+
+/* El contenedor de contenido se expande si es necesario */
+.content {
+    padding: 20px;
+}
+
 /* Card para home.html */
 .card-home {
     background-color: rgb(0, 0, 0);

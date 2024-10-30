@@ -29,14 +29,38 @@ def mesa_login(request):
     
     return render(request, 'login.html')
 
+# CATEGORIAS
+def categorias(request):
+    categorias_disponibles = [
+        {'nombre': 'Platos', 'imagen': '/media/platos.jpg'},
+        {'nombre': 'Bebestibles', 'imagen': '/media/bebestibles.jpg'},
+        {'nombre': 'Acompañamiento', 'imagen': '/media/acompañamiento.jpg'},
+        {'nombre': 'Postres', 'imagen': '/media/postres.jpg'},
+    ]
+
+    context = {
+        'categorias': categorias_disponibles,
+    }
+    return render(request, 'categorias.html', context)
+
+# MENU
 def menu(request):
     mesa_token = request.session.get('mesa_token', None)
     mesa_nombre = mesa_token.split('_')[0] if mesa_token else "Desconocida"
-    
-    # Supongamos que obtienes los productos de tu modelo
-    productos = Producto.objects.all()
-    
-    return render(request, 'menu.html', {'productos': productos, 'mesa_nombre': mesa_nombre})
+
+    # Obtener categoría seleccionada de los parámetros GET
+    categoria = request.GET.get('categoria')
+    if categoria:
+        productos = Producto.objects.filter(categoria=categoria)
+    else:
+        productos = Producto.objects.all()
+
+    return render(request, 'menu.html', {
+        'productos': productos,
+        'mesa_nombre': mesa_nombre,
+        'categoria_seleccionada': categoria
+    })
+
 
 def login_tablet(request):
     if request.method == 'POST':
@@ -64,7 +88,7 @@ def carrito(request):
     # Aquí puedes manejar los items del carrito, dependiendo de tu implementación
     return render(request, 'carrito.html')
 
-# Carrito n°1
+# Carrito 
 def agregar_al_carrito(request, producto_id):
     if request.method == 'GET':
         producto = get_object_or_404(Producto, id=producto_id)

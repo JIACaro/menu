@@ -4,9 +4,18 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault();  // Esto evita que la página se redirija a '#'
         document.getElementById('logout-form').submit();  // Enviar el formulario de logout
     });
+
+    // Cargar el carrito desde el Local Storage al iniciar
+    cargarCarritoDesdeLocalStorage();
+    actualizarCarrito();
+
+    // Evitar que el carrito se cierre al hacer clic en su interior
+    const cartDropdown = document.getElementById('cartContent');
+    cartDropdown.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
 });
 
-// carrito
 let carrito = {};
 
 function agregarAlCarrito(productoId) {
@@ -18,6 +27,7 @@ function agregarAlCarrito(productoId) {
         carrito[productoId] = { nombre, precio, cantidad: 1 };
     }
     actualizarCarrito();
+    guardarCarritoEnLocalStorage();
 }
 
 function eliminarDelCarrito(productoId) {
@@ -28,6 +38,7 @@ function eliminarDelCarrito(productoId) {
         }
     }
     actualizarCarrito();
+    guardarCarritoEnLocalStorage();
 }
 
 function actualizarCarrito() {
@@ -57,5 +68,18 @@ function actualizarCarrito() {
 
     if (count === 0) {
         cartItems.innerHTML = '<p class="text-center">Tu carrito está vacío.</p>';
+    }
+}
+
+// Función para guardar el carrito en el Local Storage
+function guardarCarritoEnLocalStorage() {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+}
+
+// Función para cargar el carrito desde el Local Storage
+function cargarCarritoDesdeLocalStorage() {
+    const carritoGuardado = localStorage.getItem('carrito');
+    if (carritoGuardado) {
+        carrito = JSON.parse(carritoGuardado);
     }
 }
