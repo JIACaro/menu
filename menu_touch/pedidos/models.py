@@ -12,9 +12,9 @@ class Producto(models.Model):
 
     nombre = models.CharField(max_length=100)
     categoria = models.CharField(max_length=50, choices=CATEGORIAS)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    precio = models.IntegerField()  # Cambiado a IntegerField para precio
     descripcion = models.TextField(blank=True, null=True)  # Descripción del producto
-    stock = models.PositiveIntegerField(default=0)
+    disponible = models.BooleanField(default=True)  # stock
     imagen = models.ImageField(upload_to='productos/', blank=True, null=True)  # Campo para la imagen del producto
 
     def __str__(self):
@@ -25,7 +25,7 @@ class Pedido(models.Model):
     cliente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fecha_pedido = models.DateTimeField(auto_now_add=True)
     productos = models.ManyToManyField(Producto, through='PedidoProducto')
-    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total = models.IntegerField(default=0)  # Cambiado a IntegerField para total
 
     def __str__(self):
         return f"Pedido #{self.id} - Cliente: {self.cliente.username}"
@@ -35,7 +35,7 @@ class PedidoProducto(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+    subtotal = models.IntegerField()  # Cambiado a IntegerField para subtotal
 
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"

@@ -31,6 +31,10 @@ def mesa_login(request):
 
 # CATEGORIAS
 def categorias(request):
+    # Obtener el nombre de la mesa desde la sesión
+    mesa_token = request.session.get('mesa_token', None)
+    mesa_nombre = mesa_token.split('_')[0] if mesa_token else "Desconocida"
+
     categorias_disponibles = [
         {'nombre': 'Platos', 'imagen': '/media/platos.jpg'},
         {'nombre': 'Bebestibles', 'imagen': '/media/bebestibles.jpg'},
@@ -40,8 +44,10 @@ def categorias(request):
 
     context = {
         'categorias': categorias_disponibles,
+        'mesa_nombre': mesa_nombre,  # Agregar mesa_nombre al contexto
     }
     return render(request, 'categorias.html', context)
+
 
 # MENU
 def menu(request):

@@ -28,8 +28,8 @@
 
             <div class="ms-auto d-flex align-items-center">
                 <span class="navbar-text text-light me-3">
-                    Esta es la: {{ mesa_nombre }}
-                </span>
+                    Mesa {{ mesa_nombre|slice:"4:" }}
+                </span>                
 
                 <!-- Ícono de carrito -->
                 <div class="dropdown">
@@ -47,7 +47,7 @@
                             <strong>Total:</strong>
                             <span id="cart-total">$0</span>
                         </div>
-                        <button class="btn btn-success w-100 mt-2" onclick="carrito()">Ir a Pagar</button>
+                        <button class="btn btn-success w-100 mt-2" onclick="carrito()">Solicitar Pedido</button>
                     </div>
                 </div>
             </div>

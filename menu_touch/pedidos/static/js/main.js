@@ -23,7 +23,7 @@ function agregarAlCarrito(productoId) {
         carrito[productoId].cantidad += 1;
     } else {
         const nombre = document.querySelector(`[data-id="${productoId}"] .card-title`).textContent;
-        const precio = parseFloat(document.querySelector(`[data-id="${productoId}"] .price`).textContent.replace('$', ''));
+        const precio = parseInt(document.querySelector(`[data-id="${productoId}"] .price`).textContent.replace('$', ''), 10); // Convertimos a entero
         carrito[productoId] = { nombre, precio, cantidad: 1 };
     }
     actualizarCarrito();
@@ -57,13 +57,13 @@ function actualizarCarrito() {
         cartItems.innerHTML += `
             <div class="d-flex justify-content-between align-items-center">
                 <span>${item.nombre} (${item.cantidad})</span>
-                <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
+                <span>$${(item.precio * item.cantidad).toLocaleString('es-CL')}</span> <!-- Formato con separador de miles -->
                 <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${id})">X</button>
             </div>
         `;
     }
 
-    cartTotal.textContent = `$${total.toFixed(2)}`;
+    cartTotal.textContent = `$${total.toLocaleString('es-CL')}`; // Formato con separador de miles
     cartCount.textContent = count;
 
     if (count === 0) {
