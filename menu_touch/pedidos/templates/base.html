@@ -14,6 +14,11 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Vinculación del archivo JavaScript -->
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        const agregarPedidoUrl = "{% url 'agregar_pedido' %}";
+        const csrfToken = "{{ csrf_token }}";
+    </script>
+
 </head>
 <body class="d-flex flex-column min-vh-100">
     <!-- Barra de navegación -->
@@ -47,7 +52,7 @@
                             <strong>Total:</strong>
                             <span id="cart-total">$0</span>
                         </div>
-                        <button class="btn btn-success w-100 mt-2" onclick="carrito()">Solicitar Pedido</button>
+                        <button class="btn btn-success w-100 mt-2" onclick="agregarPedido()">Solicitar Pedido</button>
                     </div>
                 </div>
             </div>

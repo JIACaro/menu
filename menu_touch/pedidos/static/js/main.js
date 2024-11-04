@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Seleccionar el enlace del símbolo © y agregar el evento click
     document.getElementById('logout-link').addEventListener('click', function(event) {
         event.preventDefault();  // Esto evita que la página se redirija a '#'
+        limpiarCarritoAlDesloguear();  // Llama a la función para limpiar el carrito
         document.getElementById('logout-form').submit();  // Enviar el formulario de logout
     });
 
@@ -15,6 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
         event.stopPropagation();
     });
 });
+
+// Función para limpiar el carrito del Local Storage
+function limpiarCarritoAlDesloguear() {
+    localStorage.removeItem('carrito');  // Elimina el carrito del Local Storage
+    console.log('Carrito eliminado del caché');
+}
 
 let carrito = {};
 
@@ -82,4 +89,44 @@ function cargarCarritoDesdeLocalStorage() {
     if (carritoGuardado) {
         carrito = JSON.parse(carritoGuardado);
     }
+}
+
+// Función para enviar el pedido
+function agregarPedido() {
+    if (!carrito || Object.keys(carrito).length === 0) {
+        alert("El carrito está vacío. Agrega productos antes de solicitar un pedido.");
+        return;
+    }
+
+    const carritoItems = Object.keys(carrito).map(id => ({
+        id: id,
+        cantidad: carrito[id].cantidad
+    }));
+
+    fetch(agregarPedidoUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify({ carrito: carritoItems }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Error en la solicitud: " + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.mensaje) {
+            alert(data.mensaje);
+            // Limpia el carrito o redirige si es necesario
+        } else if (data.error) {
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error al procesar la solicitud:', error);
+        alert('Hubo un problema al procesar el pedido. Inténtalo de nuevo más tarde.');
+    });
 }

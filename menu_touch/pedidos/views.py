@@ -4,7 +4,8 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.db.models import F
-
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     mesa_token = request.session.get('mesa_token', None)
@@ -67,6 +68,76 @@ def menu(request):
         'categoria_seleccionada': categoria
     })
 
+# PEDIR
+def agregar_pedido(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            print('Datos recibidos:', data)  # Verifica los datos recibidos
+            
+            carrito = data.get('carrito', [])
+            
+            if not carrito:
+                return JsonResponse({'error': 'El carrito está vacío'}, status=400)
+            
+            # Obtener el nombre de la mesa desde la sesión o derivar de mesa_token
+            mesa_nombre = request.session.get('mesa_nombre')
+            if not mesa_nombre:
+                mesa_token = request.session.get('mesa_token')
+                if mesa_token:
+                    mesa_nombre = mesa_token.split('_')[0]  # Extrae el nombre de la mesa del token
+                    print("Mesa nombre derivado de mesa_token:", mesa_nombre)
+            
+            print("Mesa nombre desde la sesión:", mesa_nombre)
+            
+            if not mesa_nombre:
+                print("Sesión actual:", request.session.items())
+                return JsonResponse({'error': 'Mesa no encontrada en la sesión'}, status=400)
+
+            # Verificar si la mesa existe en la base de datos
+            try:
+                mesa = Mesa.objects.get(username=mesa_nombre)
+            except Mesa.DoesNotExist:
+                return JsonResponse({'error': 'Mesa no encontrada en la base de datos'}, status=404)
+
+            # Crear pedido y procesar productos
+            pedido = Pedido.objects.create(mesa=mesa, total=0)
+            total_pedido = 0
+            
+            for item in carrito:
+                try:
+                    producto = Producto.objects.get(id=item['id'])
+                except Producto.DoesNotExist:
+                    return JsonResponse({'error': f'Producto con ID {item["id"]} no encontrado'}, status=404)
+
+                cantidad = item['cantidad']
+                if cantidad <= 0:
+                    return JsonResponse({'error': f'Cantidad inválida para el producto {item["id"]}'}, status=400)
+                
+                subtotal = producto.precio * cantidad
+                total_pedido += subtotal
+
+                PedidoProducto.objects.create(
+                    pedido=pedido,
+                    producto=producto,
+                    cantidad=cantidad,
+                    subtotal=subtotal
+                )
+
+            # Guardar el total en el pedido y actualizarlo
+            pedido.total = total_pedido
+            pedido.save()
+
+            return JsonResponse({'mensaje': 'Pedido agregado exitosamente'})
+
+        except (json.JSONDecodeError, KeyError) as e:
+            print('Error de procesamiento de datos:', e)
+            return JsonResponse({'error': f'Error en los datos: {str(e)}'}, status=400)
+        except Exception as e:
+            print('Error inesperado:', e)  # Log de error detallado
+            return JsonResponse({'error': f'Error interno: {str(e)}'}, status=500)
+    
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 def login_tablet(request):
     if request.method == 'POST':

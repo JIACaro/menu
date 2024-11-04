@@ -50,7 +50,7 @@
             <div class="col-md-3">
                 <div class="order-card position-relative">
                     <div class="order-header">
-                        Mesa: {{ pedido.cliente.username }}
+                        Mesa: {{ pedido.mesa.username }}
                     </div>
                     <ul class="mt-2">
                         {% for pedido_producto in pedido.pedidoproducto_set.all %}
