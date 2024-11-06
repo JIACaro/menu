@@ -1,0 +1,42 @@
+.order-card {
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: opacity 0.5s ease-out; 
+}
+.order-header {
+    background-color: #6c757d;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px 5px 0 0;
+}
+.check-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    color: #28a745;
+    background-color: #ffffff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+.clock {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1.25rem;
+    color: white;
+    background-color: #6c757d;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+body {
+    background-color: #343a40;
+    color: white;
+}

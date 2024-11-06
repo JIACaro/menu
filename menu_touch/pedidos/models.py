@@ -30,13 +30,20 @@ class Mesa(models.Model):
 
 # Modelo Pedido
 class Pedido(models.Model):
+    ESTADOS = [
+        ('PREP', 'En preparación'),
+        ('LIST', 'Listo para entrega'),
+        ('ENTR', 'Entregado'),
+    ]
+
     mesa = models.ForeignKey(Mesa, on_delete=models.CASCADE)
     fecha_pedido = models.DateTimeField(auto_now_add=True)
     productos = models.ManyToManyField(Producto, through='PedidoProducto')
     total = models.IntegerField(default=0)
+    estado = models.CharField(max_length=4, choices=ESTADOS, default='PREP')  # El estado inicial por defecto es 'En preparación'
 
     def __str__(self):
-        return f"Pedido #{self.id} - Mesa: {self.mesa.username}"
+        return f"Pedido #{self.id} - Mesa: {self.mesa.username} - Estado: {self.get_estado_display()}"
 
 # Modelo intermedio para manejar la cantidad de productos en un pedido
 class PedidoProducto(models.Model):
@@ -49,7 +56,7 @@ class PedidoProducto(models.Model):
         return f"{self.cantidad} x {self.producto.nombre}"
 
 
-# Modelo PerfilUsuario (opcional si es necesario para otras funcionalidades)
+# Modelo PerfilUsuario 
 class PerfilUsuario(models.Model):
     usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     es_cliente = models.BooleanField(default=True)
