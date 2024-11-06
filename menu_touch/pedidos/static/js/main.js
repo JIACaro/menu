@@ -49,9 +49,14 @@ function eliminarDelCarrito(productoId) {
 }
 
 function actualizarCarrito() {
+    if (Object.keys(carrito).length > 0) {  // Solo mostrar el log si el carrito no está vacío
+        console.log("Actualizando carrito, contenido actual:", carrito);
+    }
+    
     const cartItems = document.getElementById("cart-items");
     const cartTotal = document.getElementById("cart-total");
     const cartCount = document.getElementById("cart-count");
+
     cartItems.innerHTML = '';
     let total = 0;
     let count = 0;
@@ -64,19 +69,21 @@ function actualizarCarrito() {
         cartItems.innerHTML += `
             <div class="d-flex justify-content-between align-items-center">
                 <span>${item.nombre} (${item.cantidad})</span>
-                <span>$${(item.precio * item.cantidad).toLocaleString('es-CL')}</span> <!-- Formato con separador de miles -->
+                <span>$${(item.precio * item.cantidad).toLocaleString('es-CL')}</span>
                 <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${id})">X</button>
             </div>
         `;
     }
 
-    cartTotal.textContent = `$${total.toLocaleString('es-CL')}`; // Formato con separador de miles
+    cartTotal.textContent = `$${total.toLocaleString('es-CL')}`;
     cartCount.textContent = count;
 
     if (count === 0) {
         cartItems.innerHTML = '<p class="text-center">Tu carrito está vacío.</p>';
     }
 }
+
+
 
 // Función para guardar el carrito en el Local Storage
 function guardarCarritoEnLocalStorage() {
@@ -100,8 +107,12 @@ function agregarPedido() {
 
     const carritoItems = Object.keys(carrito).map(id => ({
         id: id,
+        nombre: carrito[id].nombre,
+        precio: carrito[id].precio,
         cantidad: carrito[id].cantidad
     }));
+
+    console.log("Carrito a enviar:", carritoItems);
 
     fetch(agregarPedidoUrl, {
         method: "POST",
@@ -118,9 +129,13 @@ function agregarPedido() {
         return response.json();
     })
     .then(data => {
+        console.log("Respuesta del servidor:", data);
         if (data.mensaje) {
-            alert(data.mensaje);
-            // Limpia el carrito o redirige si es necesario
+            alert(data.mensaje);  // Muestra mensaje de éxito
+            moverPedidoAlHistorial(carritoItems);  // Mover el pedido al historial
+            carrito = {};  // Vaciar el carrito actual
+            actualizarCarrito();  // Refrescar la vista del carrito
+            guardarCarritoEnLocalStorage();
         } else if (data.error) {
             alert(data.error);
         }
@@ -129,4 +144,76 @@ function agregarPedido() {
         console.error('Error al procesar la solicitud:', error);
         alert('Hubo un problema al procesar el pedido. Inténtalo de nuevo más tarde.');
     });
+}
+
+
+// Función para mover el pedido actual al historial de pedidos
+function moverPedidoAlHistorial(nuevoPedido) {
+    console.log("Ejecutando moverPedidoAlHistorial con nuevo pedido:", nuevoPedido);
+    const pedidosRealizadosDiv = document.getElementById("pedidos-realizados");
+
+    // Crear una variable para almacenar el HTML de todos los productos
+    let pedidoHtml = pedidosRealizadosDiv.innerHTML;
+    let totalPedido = 0;
+
+    // Crear HTML de los productos del nuevo pedido
+    nuevoPedido.forEach(item => {
+        totalPedido += item.precio * item.cantidad;
+        pedidoHtml += `<span>${item.nombre} (${item.cantidad}) - $${(item.precio * item.cantidad).toLocaleString('es-CL')}</span><br>`;
+    });
+
+    // Actualizar el total acumulado en el historial
+    let totalActual = parseFloat(pedidosRealizadosDiv.getAttribute('data-total') || '0');
+    totalActual += totalPedido;
+    pedidosRealizadosDiv.setAttribute('data-total', totalActual);
+
+    // Mostrar el total acumulado solo una vez al final de todos los productos
+    pedidoHtml += `<strong>Total acumulado: $${totalActual.toLocaleString('es-CL')}</strong><br>`;
+
+    // Actualizar el contenido del historial en el DOM
+    pedidosRealizadosDiv.innerHTML = pedidoHtml;
+
+    // Guardar el historial en el Local Storage
+    guardarHistorialEnLocalStorage(pedidoHtml, totalActual);
+
+    console.log("Contenido actualizado de pedidos-realizados:", pedidosRealizadosDiv.innerHTML);
+}
+
+// Función para guardar el historial de pedidos en el Local Storage
+function guardarHistorialEnLocalStorage(pedidoHtml, totalActual) {
+    const historial = {
+        contenido: pedidoHtml,
+        total: totalActual
+    };
+    localStorage.setItem('historialPedidos', JSON.stringify(historial));
+}
+
+function cargarHistorialDesdeLocalStorage() {
+    const historialGuardado = localStorage.getItem('historialPedidos');
+    if (historialGuardado) {
+        const historial = JSON.parse(historialGuardado);
+        const pedidosRealizadosDiv = document.getElementById("pedidos-realizados");
+        pedidosRealizadosDiv.innerHTML = historial.contenido;
+        pedidosRealizadosDiv.setAttribute('data-total', historial.total);
+    }
+}
+
+// Llama a esta función al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    cargarHistorialDesdeLocalStorage();  // Cargar el historial guardado en el Local Storage
+    cargarCarritoDesdeLocalStorage();    // Cargar el carrito desde el Local Storage
+    actualizarCarrito();                 // Actualizar la vista del carrito
+});
+
+//Borra el localstorage
+function borrarHistorial() {
+    // Elimina el historial de pedidos del Local Storage
+    localStorage.removeItem('historialPedidos');
+    
+    // Limpia el contenido de la sección "Pedidos realizados"
+    const pedidosRealizadosDiv = document.getElementById("pedidos-realizados");
+    pedidosRealizadosDiv.innerHTML = '<p>No hay pedidos realizados.</p>';
+    pedidosRealizadosDiv.setAttribute('data-total', '0');
+
+    console.log("Historial de pedidos eliminado del Local Storage y limpiado en el DOM.");
 }

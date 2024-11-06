@@ -40,3 +40,9 @@ body {
     background-color: #343a40;
     color: white;
 }
+#pedidos-realizados {
+    display: block !important;
+    color: white !important;  /* Asegura que el texto sea blanco y visible en un fondo oscuro */
+    padding: 10px;
+    font-size: 1rem;
+}
